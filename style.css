@@ -1,0 +1,114 @@
+*, :before, :after {
+    box-sizing: border-box;
+}
+
+.container {
+    width: 100%;
+    max-width: 600px;
+    margin: 2rem auto;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;   
+    gap: 2rem;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;   
+}
+
+.game-board {
+    width:100%;
+    max-width: 600px;
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+}
+
+.game-cell {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 1px;
+    border-top: 1px solid darkgray;
+    border-left: 1px solid darkgray;
+    /* font-size: 3rem; */
+    text-align: center;
+    line-height: 0.1ch;
+    color: white;
+    background-color: black;
+}
+
+.game-cell input {
+    width: 2ch;
+    padding: 0;
+    border: none;
+    font-size: 3rem;
+    text-align: center;
+    color: rgb(194, 194, 194);
+    background-color: transparent;
+}
+
+.game-cell input:focus {
+    border: none;
+    background-color: rgb(60, 53, 41);
+}
+
+.game-board .c3,
+.game-board .c6,
+.game-board .c9
+{
+    /* outline: 1px solid orange; */
+    border-right: 3px solid white;
+}
+
+.game-board .r3,
+.game-board .r6,
+.game-board .r9
+{
+    /* outline: 1px solid orange; */
+    border-bottom: 3px solid white;
+}
+
+.game-cell.c1 {
+    border-left: 3px solid white;
+}
+
+.game-cell.r1 {
+    border-top: 3px solid white;
+}
+
+.highlight, .highlight input {
+    background-color: rgb(61, 61, 25);
+    color: white;
+}
+
+body {
+    background-color: black;
+}
+
+.commands button {
+    border-radius: 4em;
+    padding: 1rem 4rem;
+
+    font-size: 2rem;
+}
+
+#output {
+    background-color: black;
+    color: green;
+    
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+
+    margin: 1rem auto;
+}
+
+@media (max-width: 950px) {
+    :root {
+        font-size: calc(100vw / 60 )
+    }
+}
