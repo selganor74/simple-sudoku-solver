@@ -1,6 +1,5 @@
 class Cell {
 
-
     row = 0;
     column = 0;
     quadrant = 0;
@@ -81,10 +80,13 @@ class Cell {
             return false;
         }
 
-        if (!this.valueExistsInLinkedCell(value)) {
-            console.log("Cell.trySetValue: Can't set " + this.selector + " to " + value + " because cell is set somewhere else");
-            return false;
-        }
+        // Once everything works fine, this check can be skipped
+        // as the availableValues are constantly kept in sync.
+        //
+        // if (!this.valueExistsInLinkedCell(value)) {
+        //     console.log("Cell.trySetValue: Can't set " + this.selector + " to " + value + " because cell is set somewhere else");
+        //     return false;
+        // }
 
         // Clear also restores the old value to the availables, if needed
         this.clear();
@@ -134,7 +136,6 @@ class Cell {
 
     /** returns true if check succedes and no linked cell is set to the required value */
     valueExistsInLinkedCell(value) {
-
         let someCellsWithSameValueFound = false;
 
         this.allLinkedCells.filter(c => c !== this).forEach(c => {
@@ -144,7 +145,6 @@ class Cell {
         });
 
         return !someCellsWithSameValueFound;
-
     }
 
     freeze() {
@@ -191,7 +191,7 @@ class GameBoard {
 
         this.allCells.forEach(c => {
             const chance = Math.random() * 10;
-            if (chance > 3) return;
+            if (chance > 1.666) return;
             if (!c.availableValues.length) return;
 
             const numberToSelect = Math.floor(Math.random() * c.availableValues.length);
@@ -200,7 +200,7 @@ class GameBoard {
         })
         console.log(
             this.allCells.filter(c => !c.freezed)
-                .every(c => c.availableValues.length >= 1) 
+                .every(c => c.availableValues.length >= 1)
         );
     }
 
@@ -280,10 +280,19 @@ class GameBoard {
                 gameBoardElement.appendChild(cell);
             }
         }
+
+
+        this.resetAll();
     }
 }
 
 class SolutionIterator {
+
+    static RESULT = {
+        foundSolution: "found solution",
+        noMoreMoves: "no more moves"
+    }
+
     /** all the cells we can set of the game (no freezed!) */
     allUnfreezedCells = [];
 
@@ -309,18 +318,18 @@ class SolutionIterator {
     pushOneDepthLevel(lastLevelRemaining) {
         /** copies the input array to avoid modifications of the original */
         const remaining = [...lastLevelRemaining];
-        if(!remaining.length)
+        if (!remaining.length)
             return false;
-        
+
         /** starts with those that have less valid values */
         remaining.sort((a, b) => a.availableValues.length - b.availableValues.length);
-        
+
         const nextCell = remaining.shift();
 
         this.remainingStack.push(remaining);
         this.currentStack.push(nextCell);
         this.currentAvailableValues.push([...nextCell.availableValues])
-    
+
         return true;
     }
 
@@ -333,7 +342,7 @@ class SolutionIterator {
     get currentCell() {
         return this.currentStack[this.stackIndex];
     }
-    
+
     get availableValuesForCurrentCell() {
         return this.currentAvailableValues[this.stackIndex];
     }
@@ -344,7 +353,7 @@ class SolutionIterator {
 
     nextStep() {
         if (this.stackIndex === -1)
-            return "no more moves";
+            return SolutionIterator.RESULT.noMoreMoves;
 
         const nextValue = this.getNextValueForCurrentCell();
         if (!nextValue) {
@@ -353,7 +362,7 @@ class SolutionIterator {
             this.currentCell.clear();
 
             const message = "(" + this.stackIndex + ") cleared " + this.currentCell.selector + " cell and backtracking because of exhausted tries at depth level " + (this.stackIndex + 1);
-            
+
             this.popOneDepthLevel();
 
             return message;
@@ -369,7 +378,7 @@ class SolutionIterator {
             // We cannot add another level of depth
             // We should check if the sudoku is solved !
             if (this.allUnfreezedCells.every(c => c.currentValid)) {
-                return "last level of depth reached. Sudoku solved!";
+                return SolutionIterator.RESULT.foundSolution;
             }
             return "last level of depth reached. Sudoku not solved!";
         }
@@ -382,16 +391,19 @@ const game = new GameBoard();
 game.bindToElementId("game-board");
 // game.newGame();
 
-let iterator; 
+let iterator = game.solve();
 
 const output = document.getElementById("output");
-document.getElementById("solve-btn").addEventListener("click", () => {
-    
+document.getElementById("solve-btn").addEventListener("click", (ev) => {
+    ev.target.disabled = true;
     const step = () => {
         const stepResult = iterator.nextStep();
         output.innerHTML = "<p>" + stepResult + "</p>" + output.innerHTML;
-        if (stepResult.startsWith("last level of") || stepResult.startsWith("no more moves"))
+
+        if (stepResult === SolutionIterator.RESULT.foundSolution || stepResult === SolutionIterator.RESULT.noMoreMoves) {
+            ev.target.disabled = false;
             return;
+        }
 
         requestAnimationFrame(() => step())
     }
