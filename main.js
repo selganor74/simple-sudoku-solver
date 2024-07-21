@@ -405,9 +405,9 @@ document.getElementById("solve-btn").addEventListener("click", (ev) => {
             return;
         }
 
-        requestAnimationFrame(() => step())
+        setTimeout(() => step(), 0)
     }
-    requestAnimationFrame(() => step());
+    setTimeout(() => step(), 0);
 });
 
 document.getElementById("new-game-btn").addEventListener("click", () => {
