@@ -21,6 +21,18 @@
     justify-content: flex-start;   
 }
 
+.header h2 {
+    padding: 1rem;
+    margin: 0 auto;
+    text-align: center;
+
+    font-size: 3rem;
+    font-family: 'Open Sans', sans-serif;
+
+    color: CanvasText;
+    background-color: Canvas;
+}
+
 .game-board {
     width:100%;
     max-width: 600px;
@@ -116,8 +128,8 @@ body {
     line-height: 1.125em;
 }
 
-@media (max-width: 950px) {
+@media (max-width: 620px) {
     :root {
-        font-size: calc(100vw / 60 )
+        font-size: calc(100vw / 38.75 )
     }
 }
