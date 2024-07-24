@@ -198,10 +198,6 @@ class GameBoard {
             c.trySetValue(c.availableValues[numberToSelect]);
             c.freeze();
         })
-        console.log(
-            this.allCells.filter(c => !c.freezed)
-                .every(c => c.availableValues.length >= 1)
-        );
     }
 
     resetAll() {
@@ -259,8 +255,6 @@ class GameBoard {
                     }
                 });
                 ip.addEventListener("change", (ev) => {
-                    const newValue = ev.target.value;
-
                     const sudokuCell = ev.target.sudokuCell;
                     if (!sudokuCell) {
                         console.error("Something bad happened!");
@@ -386,6 +380,7 @@ class SolutionIterator {
         return "(" + this.stackIndex + ") set " + previousCell.currentValid + " in " + previousCell.selector;
     }
 }
+
 
 const game = new GameBoard();
 game.bindToElementId("game-board");
